@@ -304,8 +304,8 @@ static char *nss_sslver_to_name(PRUint16 nssver)
   }
 }
 
-static SECStatus set_ciphers(struct Curl_easy *data, PRFileDesc * model,
-                             char *cipher_list)
+static SECStatus set_ciphers_internal(struct Curl_easy *data, PRFileDesc * model,
+                                      char *cipher_list)
 {
   unsigned int i;
   PRBool cipher_state[NUM_OF_CIPHERS];
@@ -374,6 +374,16 @@ static SECStatus set_ciphers(struct Curl_easy *data, PRFileDesc * model,
   }
 
   return SECSuccess;
+}
+
+static SECStatus set_ciphers(struct Curl_easy *data, PRFileDesc * model,
+                             char *cipher_list)
+{
+  /* We make a duplicate as set_ciphers_internal clobbers its input. */
+  char *cipher_list_dup =  (char *)PORT_Strdup(cipher_list);
+  SECStatus status = set_ciphers_internal(data, model, cipher_list_dup);
+  free(cipher_list_dup);
+  return status;
 }
 
 /*
