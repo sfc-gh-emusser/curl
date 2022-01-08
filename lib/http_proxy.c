@@ -222,7 +222,7 @@ CURLcode Curl_proxyCONNECT(struct connectdata *conn,
     check = Curl_timeleft(data, NULL, TRUE);
     if(check <= 0) {
       failf(data, "Proxy CONNECT aborted due to timeout");
-      return CURLE_RECV_ERROR;
+      return CURLE_OPERATION_TIMEDOUT;
     }
 
     if(0 == Curl_socket_ready(tunnelsocket, CURL_SOCKET_BAD, 0))
